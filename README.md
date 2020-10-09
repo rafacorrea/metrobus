@@ -20,6 +20,6 @@
   * metrobuses
     * filtro por alcaldia y por unidad
   * historial
-    * por unidad
+    * filtro por unidad
   * alcaldias
   * unidades que hayan estado dentro de una alcaldia
