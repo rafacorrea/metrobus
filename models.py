@@ -10,6 +10,10 @@ class Zone(db.Model):
     name = db.Column(db.String())
     shape = db.Column(JSON)
 
+    def as_dict(self):
+        return {'id': self.id, 'name': self.name}
+        # return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
     def __init__(self, name, shape):
         self.name = name
         self.shape = shape

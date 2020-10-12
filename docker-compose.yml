@@ -1,8 +1,9 @@
 web:
   build: .
-  command: flask run
+  command: flask run --host 0.0.0.0
   environment:
     FLASK_ENV: development
+    FLASK_APP: app
   ports:
     - 5000:5000
   volumes:

@@ -16,7 +16,7 @@ if app.config["ENV"] == "production":
 else:
     app.config.from_object("config.DevelopmentConfig")
 
-from models import db  # <-- this needs to be placed after app is created
+from models import db
 migrate = Migrate(app, db)
 
 db.init_app(app)
@@ -33,7 +33,7 @@ def hello():
 def alcaldias():
     res = Zone.query.all()
 
-    return jsonify(res)
+    return jsonify([zone.as_dict() for zone in res])
 
 @app.cli.command("update_zones")
 def update_zones():
