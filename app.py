@@ -22,8 +22,17 @@ migrate = Migrate(app, db)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-# celery.conf.update(app.config)
+celery = Celery(
+    app.import_name,
+    backend=app.config['CELERY_RESULT_BACKEND'],
+    broker=app.config['CELERY_BROKER_URL']
+)
+
+celery.conf.update(app.config)
+
+@celery.task()
+def add_together(a, b):
+    return a + b
 
 @app.route("/")
 def hello():
@@ -62,5 +71,10 @@ def update_zones():
         db.session.commit()
         db.session.flush()
 
+# @app.cli.command("test_celery")
+# def test_celery():
+#     result = add_together.delay(23, 42)
+#     result.wait()  # 65
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int("5000"), debug=True)
+    aplication.run(host="0.0.0.0", port=int("5000"), debug=True)

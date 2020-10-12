@@ -1,31 +1,51 @@
-web:
-  build: .
-  command: flask run --host 0.0.0.0
-  environment:
-    FLASK_ENV: development
-    FLASK_APP: app
-  ports:
-    - 5000:5000
-  volumes:
-    - .:/app:z
-  links:
-    - db
-    - redis
+version: "2"
+services:
+  web:
+    build: .
+    command: flask run --host 0.0.0.0
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: app
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app:z
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
 
-db:
-  image: postgres
-  environment:
-    POSTGRES_USER: user
-    POSTGRES_PASSWORD: password
-    POSTGRES_DB: database
-  ports:
-      - 5432:5432
-  volumes:
-    - ./postgres-data:/var/lib/postgresql/data
-  restart: always
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    ports:
+        - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    restart: always
 
-redis:
-  image: redis:alpine
-  ports:
-    - 6379:6379
-  restart: always
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    restart: always
+
+  worker:
+    build: .
+    command: celery -A app.celery worker -l INFO
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: app
+    volumes:
+      - .:/app:z
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
