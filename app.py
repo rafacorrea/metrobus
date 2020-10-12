@@ -31,8 +31,21 @@ celery = Celery(
 celery.conf.update(app.config)
 
 @celery.task()
-def add_together(a, b):
-    return a + b
+def fetch_locations():
+    # Request data about zones
+    url = 'https://datos.cdmx.gob.mx/api/records/1.0/download/?dataset=prueba_fetchdata_metrobus'
+    r = requests.get(url, allow_redirects=True)
+
+    decoded_content = r.content.decode('utf-8')
+
+    cr = csv.reader(decoded_content.splitlines(), delimiter=';')
+
+    # Skips headers
+    next(cr)
+
+    # Insert all records
+    for row in cr:
+        row
 
 @app.route("/")
 def hello():
@@ -71,10 +84,10 @@ def update_zones():
         db.session.commit()
         db.session.flush()
 
-# @app.cli.command("test_celery")
-# def test_celery():
-#     result = add_together.delay(23, 42)
-#     result.wait()  # 65
+@app.cli.command("test_celery")
+def test_celery():
+    result = fetch_locations.delay()
+    result.wait()  # 65
 
 if __name__ == "__main__":
-    aplication.run(host="0.0.0.0", port=int("5000"), debug=True)
+    app.run(host="0.0.0.0", port=int("5000"), debug=True)

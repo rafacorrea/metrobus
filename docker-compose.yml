@@ -13,6 +13,7 @@ services:
     depends_on:
       - db
       - redis
+      - worker
     links:
       - db
       - redis
