@@ -1,2 +1,7 @@
 flask
 flask_sqlalchemy
+flask-migrate
+celery
+psycopg2-binary
+flask-script
+requests
