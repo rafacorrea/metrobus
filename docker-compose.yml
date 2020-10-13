@@ -38,7 +38,7 @@ services:
 
   worker:
     build: .
-    command: celery -A app.celery worker -l INFO
+    command: celery -A app.celery worker -l INFO -B
     environment:
       FLASK_ENV: development
       FLASK_APP: app

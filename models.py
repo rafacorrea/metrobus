@@ -1,9 +1,12 @@
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 from geoalchemy2 import Geometry
+from geoalchemy2.shape import to_shape
+from shapely.geometry import mapping
 
 db = SQLAlchemy()
 
+# Model representing "Alcaldias"
 class Zone(db.Model):
     __tablename__ = 'zone'
 
@@ -12,7 +15,7 @@ class Zone(db.Model):
     shape = db.Column(Geometry(geometry_type='POLYGON', srid=4326))
 
     def as_dict(self):
-        return {'id': self.id, 'name': self.name}
+        return {'id': self.id, 'name': self.name, 'shape': mapping(to_shape(self.shape))}
         # return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __init__(self, name, shape):
@@ -22,6 +25,7 @@ class Zone(db.Model):
     def __repr__(self):
         return '<id {}>'.format(self.id)
 
+# Model representing "Metrobuses"
 class Vehicle(db.Model):
     __tablename__ = 'vehicle'
 
@@ -31,7 +35,7 @@ class Vehicle(db.Model):
     positions = db.relationship('Position', backref='vehicle', lazy=True)
 
     def as_dict(self):
-        return {'id': self.id, 'api_id': self.api_id}
+        return {'id': self.id, 'api_id': self.api_id, 'label': self.label}
         # return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __init__(self, api_id, label):
@@ -41,6 +45,7 @@ class Vehicle(db.Model):
     def __repr__(self):
         return '<id {}>'.format(self.id)
 
+# Model representing vehicle position history / "Historial"
 class Position(db.Model):
     __tablename__ = 'position'
 
@@ -51,7 +56,7 @@ class Position(db.Model):
         nullable=False)
 
     def as_dict(self):
-        return {'id': self.id, 'api_id': self.api_id}
+        return {'id': self.id, 'location': mapping(to_shape(self.location)), 'last_updated': self.last_updated}
         # return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __init__(self, last_updated, location, vehicle_id):

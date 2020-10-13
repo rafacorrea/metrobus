@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -7,6 +8,18 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
+
+    # configure celery periodic task
+    CELERYBEAT_SCHEDULE = {
+        # Executes every minute
+        'periodic_task-every-minute': {
+            'task': 'periodic_task',
+            'schedule': timedelta(seconds=30)
+        }
+    }
+
+    # dont sort keys alphabetically with Flask jsonify
+    JSON_SORT_KEYS = False
 
 
 class ProductionConfig(Config):

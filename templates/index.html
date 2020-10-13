@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--Converted via md-to-html-->
+<html>
+ <head>
+ </head>
+ <body>
+  <h1>
+   metrobus
+  </h1>
+  <h2>
+   Pasos
+  </h2>
+  <ol>
+   <li>
+    GET
+    <a href="https://datos.cdmx.gob.mx/api/records/1.0/download/?dataset=alcaldias">
+     https://datos.cdmx.gob.mx/api/records/1.0/download/?dataset=alcaldias
+    </a>
+   </li>
+  </ol>
+  <ul>
+   <li>
+    Parse
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Guardar informacion y area de cada alcaldia para poder saber en cual se encuentran los metrobuses
+   </li>
+  </ul>
+  <ol>
+   <li>
+    GET
+    <a href="https://datos.cdmx.gob.mx/api/records/1.0/download/?dataset=prueba_fetchdata_metrobus">
+     https://datos.cdmx.gob.mx/api/records/1.0/download/?dataset=prueba_fetchdata_metrobus
+    </a>
+   </li>
+  </ol>
+  <ul>
+   <li>
+    Parse
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Cada hora hacer un query y guardar historico de la ubicacion de cada metrobus.
+   </li>
+  </ul>
+  <h2>
+   API
+  </h2>
+  <h3>
+   Modelos / Recursos
+  </h3>
+  <ul>
+   <li>
+    Metrobus
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Alcaldia
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Historico
+   </li>
+  </ul>
+  <h3>
+   Endpoints
+  </h3>
+  <ul>
+   <li>
+    metrobuses
+   </li>
+  </ul>
+  <pre><code>* filtro por alcaldia y por unidad
+</code></pre>
+  <ul>
+   <li>
+    historial
+   </li>
+  </ul>
+  <pre><code>* filtro por unidad
+</code></pre>
+  <ul>
+   <li>
+    alcaldias
+   </li>
+  </ul>
+  <ul>
+   <li>
+    unidades que hayan estado dentro de una alcaldia
+   </li>
+  </ul>
+  <h2>
+   Arquitectura
+  </h2>
+  <ul>
+   <li>
+    App en flask
+   </li>
+  </ul>
+  <ul>
+   <li>
+    DB con postgis
+   </li>
+  </ul>
+  <ul>
+   <li>
+    redis
+   </li>
+  </ul>
+  <ul>
+   <li>
+    worker con celery
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Para mas informacion sobre postgis consultar documentacion:
+    <a href="http://postgis.net/docs/">
+     http://postgis.net/docs/
+    </a>
+   </li>
+  </ul>
+  <h2>
+   Setup
+  </h2>
+  <p>
+   Necesitaras lo siguiente:
+  </p>
+  <ul>
+   <li>
+    <code>
+     docker
+    </code>
+   </li>
+  </ul>
+  <ul>
+   <li>
+    <code>
+     docker-compose
+    </code>
+   </li>
+  </ul>
+  <p>
+   Para migrar la base de datos es necesario correr
+   <code>
+    flask db migrate
+   </code>
+   y
+   <code>
+    flask db upgrade
+   </code>
+   .
+  </p>
+  <p>
+   Para actualizar las alcaldias se hizo un comando de cli de flask llamado
+   <code>
+    update_zones
+   </code>
+   . Para ejecutarlo solo llamar
+   <code>
+    flask update_zones
+   </code>
+   .
+  </p>
+  <h2>
+   Instrucciones de uso
+  </h2>
+  <p>
+   Para correr la aplicacion en modo desarrollo, unicamente basta con correr
+   <code>
+    docker-compose up -d --build
+   </code>
+   . Despues se debe correr
+   <code>
+    docker-compose up
+   </code>
+   y la aplicacion estar sirviendo en el puerto 5000.
+  </p>
+  <p>
+   Puntos a considerar:
+  </p>
+  <ul>
+   <li>
+    La base de datos esta montada en la raiz del proyecto para poder utilizar una base de datos pre-poblada (se encuentra en la carpeta postgres-data).
+   </li>
+  </ul>
+  <ul>
+   <li>
+    Actualmente los datos sobre la posicion de los metrobuses se actualiza cada hora (ver
+    <code>
+     CELERY_BEAT_SCHEDULE
+    </code>
+    en la configuracion de la aplicacion)
+   </li>
+  </ul>
+ </body>
+</html>
