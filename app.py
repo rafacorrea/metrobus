@@ -2,8 +2,11 @@ from flask import Flask
 from flask import request, jsonify
 from celery import Celery
 from flask_migrate import Migrate
+from geoalchemy2.shape import from_shape
+from shapely.geometry import asShape
 import requests
 import json
+import geojson
 import csv
 import os
 
@@ -45,7 +48,27 @@ def fetch_locations():
 
     # Insert all records
     for row in cr:
-        row
+        shape = geojson.loads(row[5])
+        geom = from_shape(asShape(shape), srid=4326)
+        exists = Vehicle.query.filter(Vehicle.api_id == row[1]).scalar() is not None
+
+        if not exists:
+            newVehicle = Vehicle(api_id = row[1],
+                        label = row[2],
+                        )
+
+        db.session.add(newvehicle)
+        db.session.commit()
+        db.session.flush()
+
+        veh_id = Vehicle.query.filter(Vehicle.api_id == row[1]).first().id
+
+        loc_str = 'POINT(' + row[4] + ',' + row[5] + ')'
+        newPosition = Position(last_updated=row[0], location=loc_str)
+
+        db.session.add(newPosition)
+        db.session.commit()
+        db.session.flush()
 
 @app.route("/")
 def hello():
@@ -56,6 +79,18 @@ def alcaldias():
     res = Zone.query.all()
 
     return jsonify([zone.as_dict() for zone in res])
+
+@app.route("/api/alcaldias/<alc_id>")
+def alcaldias_show(alc_id):
+    res = Zone.query.get(alc_id)
+
+    return jsonify(res.as_dict())
+
+
+@app.route("/api/metrobuses/<mb_id>")
+def mb_show(mb_id):
+    res = Vehicle.query.get(mb_id)
+    return jsonify(res.as_dict())
 
 @app.cli.command("update_zones")
 def update_zones():
@@ -75,9 +110,10 @@ def update_zones():
 
     # Insert all records
     for row in cr:
-        shape = json.loads(row[5])
+        shape = geojson.loads(row[5])
+        geom = from_shape(asShape(shape), srid=4326)
         newZone = Zone(name = row[0],
-                    shape = shape,
+                    shape = geom,
                     )
 
         db.session.add(newZone)

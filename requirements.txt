@@ -6,3 +6,6 @@ psycopg2-binary
 flask-script
 requests
 redis
+geoalchemy2
+geojson
+shapely

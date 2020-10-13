@@ -19,7 +19,7 @@ services:
       - redis
 
   db:
-    image: postgres
+    image: postgis/postgis
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
