@@ -28,7 +28,7 @@
   Para migrar la base de datos es necesario correr `flask db migrate` y `flask db upgrade`.
   Para actualizar las alcaldias se hizo un comando de cli de flask llamado `update_zones`. Para ejecutarlo solo llamar `flask update_zones`.
 
-  (Nada de esto es necesario si se usa la carpeta postgres-data como volumen compartido con docker.)
+  (Para usar una base de datos poblada descomprimir postgres-data.tar.gz)
 
   Para correr la aplicacion en modo desarrollo, unicamente basta con correr `docker-compose up -d --build`. Despues se debe correr `docker-compose up` y la aplicacion estara sirviendo en el puerto 5000.
 
