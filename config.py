@@ -14,7 +14,7 @@ class Config(object):
         # Executes every minute
         'periodic_task-every-minute': {
             'task': 'periodic_task',
-            'schedule': timedelta(seconds=30)
+            'schedule': timedelta(hours=1)
         }
     }
 
